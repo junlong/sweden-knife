@@ -1,0 +1,28 @@
+Eclipse中导入开源jar包的src，a different way
+
+总结：maven构建java工程，引入开源jar依赖，下载jar源码，Eclipse导入开源jar包src。
+
+详细：
+1、不指定archetype通过maven创建一个简单的Java项目
+mvn archetype:create -DgroupId=com.test -DartifactId=TestProject
+
+2、pom.xml新增开源jar依赖如spring
+<dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-context</artifactId>
+	<version>3.2.3.RELEASE</version>
+</dependency>
+
+3、构建eclipse工程随便把开源jar的源码down下来
+mvn eclipse:eclipse -DdownloadSources=true
+--也可以分成两步操作
+mvn eclipse:eclipse
+mvn dependency:sources
+
+4、导入开源jar源码a different way
+打开.classpath文件找到jar的classpathentry
+<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/3.2.3.RELEASE/spring-context-3.2.3.RELEASE.jar"/>
+
+新增sourcepath
+<classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/3.2.3.RELEASE/spring-context-3.2.3.RELEASE.jar" sourcepath="/M2_REPO/org/springframework/org.springframework.context/3.0.5.RELEASE/org.springframework.context-3.0.5.RELEASE-sources.jar"/>
+5、have fun！

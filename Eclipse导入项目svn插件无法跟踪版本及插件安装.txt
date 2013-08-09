@@ -1,0 +1,48 @@
+Eclipse导入项目svn插件无法跟踪版本的问题
+总结：Eclipse中SVN插件的版本要和系统里安装的SVN客户端版本一致，才能使得Eclipse导入本地工程后正确和SVN关联。
+
+详细：
+Eclipse版本是3.5.x，系统里的SVN客户端版本是1.6.4。
+SVN客户端版本之前也是1.6.x后面根据提示进行了升级，目前版本为1.7.9
+
+由于项目构建通过Maven管理，使用SVN客户端把项目下载到本地mvn eclipse:eclipse之后，再用Eclipse导入工程，但是导入的工程却没有和SVN关联，无法跟踪代码版本信息。升级之前都是这样操作，导入工程后就自动和SVN地址关联了。
+
+但如果直接在Eclipse里面import方式通过svn插件checkout工程，工程却能够和SVN关联。目前的场景是先把工程通过客户端先拿到本地，然后再导入（因为项目里有很多个工程，都用Maven管理）。
+
+由此分析得出Eclipse里的SVN插件版本和系统安装的svn客户端里的版本不一致导致。于是决定升级eclipse的svn插件，删除插件重新安装。但在删除插件时，发现插件删除按钮是灰色的。然后决定直接在plugins和features目录删除svn相关jar，到指定目录却没有发现相关jar包。一阵搜索最后发现svn插件安装在dropins目录下。
+http://subclipse.tigris.org/files/documents/906/49280/site-1.8.22.zip下载最新svn插件解压copy至dropins\svn重启再试，问题搞定ok！
+
+Eclipse3.4以上版本支持使用dropins的插件安装方式，使用方便，共有四种使用方法：
+
+1. 最简单的，直接将jar包放到dropins目录下
+eclipse/
+    dropins/
+
+2. 传统格式，统一放到一个eclipse目录下
+eclipse/
+    dropins/
+        eclipse/
+             features/
+             plugins/
+3. 按照插件名称区分
+eclipse/
+    dropins/
+        eclemma/
+            features/
+            plugins/
+        sqlexplorer/
+            features/
+            plugins/
+4. 类似links方式添加链接
+eclipse/ 
+    dropins/ 
+        eclemma-1.5.3.link 
+其中eclemma-1.5.3.link的内容：path=J:\\**\\eclipseplugins\\eclemma
+实际插件的位置和文件是：
+J:/**/eclipseplugins/
+    eclemma/
+        features/
+        plugins/
+
+如果只安装一个Eclipse的话建议采用第三种，安装多个Eclipse的话采用第四种。 
+注意：如果发现安装了插件但没有效果，可以删除eclipse主目录下的\configuration\org.eclipse.update后，再在命令行方式下，进入在Eclipse根目录(eclipse.exe所在目录)通过“eclipse –clean”的命令来启动Eclipse，clean命令会告诉Eclipse重新搜索并加载所有的插件信息
