@@ -1,0 +1,125 @@
+1、sofa总控pom的结构/
+	<!--top pom的coordinate-->
+	<groupId>com.alipay.promoevent</groupId>
+	<artifactId>promoevent-parent</artifactId>
+	<version>1.0</version>
+	<!--top pom的package类型必须是pom-->
+	<packaging>pom</packaging>
+	
+	<dependencyManagement>
+		<dependencies>
+			<!--各个子bundle project的依赖，即各子bundle的coordinate-->
+			<dependency>
+				<groupId>com.alipay.promoevent</groupId>
+				<artifactId>promoevent-common-dal</artifactId>
+				<version>1.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	by adding the parent section,we can now inherit some of the properties of our parent POM.
+	
+2、sofa的app目录--工程总pom结构/app
+  <!--sofa总控pom的coordinate-->
+  <parent>
+    <artifactId>promoevent-parent</artifactId>
+    <groupId>com.alipay.promoevent</groupId>
+    <version>1.0</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.alipay.promoevent</groupId>
+  <artifactId>promoevent</artifactId>
+  <version>1.0</version>
+
+  <name>Alipay promoevent</name>
+  <description>Alipay promoevent</description>
+  <url>http://home.alipay.net</url>
+
+  <packaging>pom</packaging>
+	<!--整个sofa工程包含的模块，即包含的子工程-->
+	<modules>
+		<module>biz</module>
+		<module>common</module>
+		<module>core</module>
+		<module>test</module>
+	</modules>
+	
+3、sofa工程/app/biz pom结构
+	 <!--/app的pom coordinate-->
+	 <parent>
+		<artifactId>promoevent</artifactId>
+		<groupId>com.alipay.promoevent</groupId>
+		<version>1.0</version>
+	  </parent>
+
+	  <modelVersion>4.0.0</modelVersion>
+
+	  <groupId>com.alipay.promoevent</groupId>
+	  <artifactId>promoevent-biz-parent</artifactId>
+	  <version>1.0</version>
+
+	  <name>Alipay promoevent-biz-parent</name>
+	  <description>Alipay promoevent-biz-parent</description>
+	  <url>http://home.alipay.net</url>
+
+	  <packaging>pom</packaging>
+	  <!--包含的子工程-->
+	  <modules>
+			<module>shared</module>
+			<module>service-impl</module>
+			<module>rtevent</module>
+	</modules>
+	
+4、sofa子工程bundle /app/biz/rtevent的pom结构
+	<parent>
+		<groupId>com.alipay.promoevent</groupId>
+		<artifactId>promoevent-biz-parent</artifactId>
+		<version>1.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.alipay.promoevent</groupId>
+	<artifactId>promoevent-biz-service-impl</artifactId>
+	<version>1.0</version>
+
+	<name>Alipay promoevent-biz-service-impl</name>
+	<description>Alipay promoevent</description>
+	<url>http://home.alipay.com</url>
+
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<!--子bundle也可依赖其他bundle（project）-->
+		<dependency>
+			<groupId>com.alipay.promoevent</groupId>
+			<artifactId>promoevent-core-model</artifactId>
+		</dependency>
+	</dependencies>
+	
+总结：
+	pom的parent标签指定当前pom文件需要继承的pom配置，默认parent所继承的pom文件在当前文件的上一级目录
+	 |-- my-module
+     |   `-- pom.xml
+     `-- pom.xml
+	 my-module/pom.xml is the POM of com.mycompany.app:my-module:1 while pom.xml is the POM of com.mycompany.app:my-app:1
+	 即my-module/pom.xml继承了pom.xml配置
+	
+	如果被继承的pom文件不在当前文件的上一级目录，则需要通过<relativePath>标签指定路径，例子如下：
+	.
+	 |-- my-module
+	 |   `-- pom.xml
+	 `-- parent
+		 `-- pom.xml
+	
+	<project>
+	  <parent>
+		<groupId>com.mycompany.app</groupId>
+		<artifactId>my-app</artifactId>
+		<version>1</version>
+		<relativePath>../parent/pom.xml</relativePath>
+	  </parent>
+	  <modelVersion>4.0.0</modelVersion>
+	  <artifactId>my-module</artifactId>
+	</project>
